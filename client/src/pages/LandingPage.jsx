@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiUsers, FiMessageCircle, FiImage, FiMap, FiBell, FiArrowRight, FiStar } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi2';
+import AISuggestions from '../components/AISuggestions';
 
 const FEATURES = [
   { icon: '📅', title: 'Create Events', desc: 'Host public or private events in minutes. Set date, location, and invite your crowd.' },
@@ -78,6 +79,9 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+      {/* AI Suggestions */}
+      <AISuggestions />
 
      {/* Features */}
       <section className="py-24 px-6 bg-surface-container-low">

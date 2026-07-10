@@ -7,6 +7,7 @@ const authRoutes    = require('./routes/authRoutes');
 const eventRoutes   = require('./routes/eventRoutes');
 const rsvpRoutes    = require('./routes/rsvpRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
+const aiRoutes      = require('./routes/aiRoutes');
 
 const app = express();
 
@@ -24,9 +25,10 @@ app.get('/health', (req, res) => res.json({ status: 'ok', app: 'EventHive API', 
 
 // ── Routes ────────────────────────────────────────────
 app.use('/api', authRoutes);
-app.use('/api', eventRoutes);
+app.use('/api/events', eventRoutes);
 app.use('/api', rsvpRoutes);
 app.use('/api', galleryRoutes);
+app.use('/api/ai', aiRoutes);
 
 // ── 404 handler ───────────────────────────────────────
 app.use((req, res) => res.status(404).json({ message: 'Route not found' }));

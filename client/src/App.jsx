@@ -7,6 +7,7 @@ import LoginPage       from './pages/LoginPage';
 import RegisterPage    from './pages/RegisterPage';
 import DashboardPage   from './pages/DashboardPage';
 import CreateEventPage from './pages/CreateEventPage';
+import EditEventPage   from './pages/EditEventPage';
 import EventDetailPage from './pages/EventDetailPage';
 import ProfilePage     from './pages/ProfilePage';
 
@@ -39,7 +40,8 @@ function AppRoutes() {
 
         <Route path="/dashboard"    element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
         <Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
-        <Route path="/events/:id"   element={<PrivateRoute><EventDetailPage /></PrivateRoute>} />
+        <Route path="/events/:id"      element={<PrivateRoute><EventDetailPage /></PrivateRoute>} />
+        <Route path="/events/:id/edit" element={<PrivateRoute><EditEventPage /></PrivateRoute>} />
         <Route path="/profile"      element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
 
         <Route path="*" element={<Navigate to={user ? '/dashboard' : '/'} replace />} />

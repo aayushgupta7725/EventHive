@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { FiUser, FiMail, FiSave, FiCamera } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { uploadEventImage } from '../services/firebase';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -8,11 +9,31 @@ export default function ProfilePage() {
   const { user, updateUser } = useAuth();
   const [form, setForm]  = useState({ name: user?.name || '', email: user?.email || '', bio: user?.bio || '' });
   const [pwd, setPwd]    = useState({ current: '', newPwd: '', confirm: '' });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]   = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [tab, setTab]    = useState('profile');
+  const fileRef = useRef(null);
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
   const setPwdField = (key) => (e) => setPwd(p => ({ ...p, [key]: e.target.value }));
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarUploading(true);
+    try {
+      const { url } = await uploadEventImage('avatars', file);
+      const res = await api.put('/profile', { avatar_url: url });
+      updateUser(res.data);
+      toast.success('Profile picture updated!');
+    } catch (err) {
+      toast.error(err.message || 'Upload failed');
+    } finally {
+      setAvatarUploading(false);
+      // Reset input so the same file can be re-selected
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -53,10 +74,31 @@ export default function ProfilePage() {
         <div className="flex items-center gap-6 mb-10">
           <div className="relative group">
             <div className="w-24 h-24 rounded-full bg-primary-container text-white flex items-center justify-center text-3xl font-bold shadow-[0_4px_20px_rgba(109,40,217,0.15)] overflow-hidden">
-              {user?.avatar_url ? <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" /> : initial}
+              {user?.avatar_url
+                ? <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
+                : initial
+              }
             </div>
-            <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg">
-              <FiCamera size={13} />
+            {/* Hidden file input */}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarUpload}
+              disabled={avatarUploading}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={avatarUploading}
+              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform disabled:opacity-60"
+              title="Change profile picture"
+            >
+              {avatarUploading
+                ? <div className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} />
+                : <FiCamera size={13} />
+              }
             </button>
           </div>
           <div>

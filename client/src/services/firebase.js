@@ -50,6 +50,10 @@ export const uploadEventImage = async (eventId, file) => {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const preset    = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
+  if (!cloudName || !preset) {
+    throw new Error('Cloudinary is not configured. Check VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in your .env file.');
+  }
+
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', preset);
@@ -60,8 +64,11 @@ export const uploadEventImage = async (eventId, file) => {
     body: formData,
   });
 
-  if (!res.ok) throw new Error('Cloudinary upload failed');
   const data = await res.json();
+  if (!res.ok) {
+    // Cloudinary returns { error: { message: "..." } } on failure
+    throw new Error(data?.error?.message || 'Cloudinary upload failed');
+  }
   return { url: data.secure_url, path: data.public_id };
 };
 

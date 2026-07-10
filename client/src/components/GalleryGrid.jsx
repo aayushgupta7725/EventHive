@@ -25,7 +25,7 @@ export default function GalleryGrid({ eventId, images = [], onUpdate, isHost }) 
       onUpdate?.([...images, res.data]);
       toast.success('Image uploaded!');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Upload failed');
+      toast.error(err.response?.data?.message || err.message || 'Upload failed');
     } finally {
       setUploading(false);
     }

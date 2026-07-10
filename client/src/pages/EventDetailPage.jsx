@@ -111,9 +111,15 @@ export default function EventDetailPage() {
         {/* Cover */}
           <div className="w-full aspect-[21/9] rounded-2xl overflow-hidden bg-secondary-container flex items-center justify-center text-7xl mb-8">
             {event.cover_image
-              ? <img src={event.cover_image} alt={event.title} className="w-full h-full object-cover" />
-              : <span>🎉</span>
+              ? <img
+                  src={event.cover_image}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                />
+              : null
             }
+            <span style={{ display: event.cover_image ? 'none' : 'flex' }}>🎉</span>
           </div>
 
           {/* Main Grid */}

@@ -58,7 +58,10 @@ exports.login = async (req, res) => {
 // GET /api/profile
 exports.getProfile = async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name, email, bio, created_at FROM users WHERE id = $1', [req.user.id]);
+    const result = await pool.query(
+      'SELECT id, name, email, bio, avatar_url, created_at FROM users WHERE id = $1',
+      [req.user.id]
+    );
     if (!result.rows.length) return res.status(404).json({ message: 'User not found' });
     res.json(result.rows[0]);
   } catch (err) {
@@ -69,10 +72,15 @@ exports.getProfile = async (req, res) => {
 // PUT /api/profile
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, bio } = req.body;
+    const { name, bio, avatar_url } = req.body;
     const result = await pool.query(
-      'UPDATE users SET name = COALESCE($1, name), bio = COALESCE($2, bio) WHERE id = $3 RETURNING id, name, email, bio',
-      [name, bio, req.user.id]
+      `UPDATE users
+       SET name       = COALESCE($1, name),
+           bio        = COALESCE($2, bio),
+           avatar_url = COALESCE($3, avatar_url)
+       WHERE id = $4
+       RETURNING id, name, email, bio, avatar_url`,
+      [name, bio, avatar_url ?? null, req.user.id]
     );
     res.json(result.rows[0]);
   } catch (err) {

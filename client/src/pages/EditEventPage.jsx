@@ -1,14 +1,24 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiCalendar, FiMapPin, FiType, FiAlignLeft, FiLock, FiGlobe, FiImage, FiArrowLeft, FiUpload } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FiArrowLeft, FiGlobe, FiLock, FiUpload } from 'react-icons/fi';
 import api from '../services/api';
 import { uploadEventImage } from '../services/firebase';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = ['Music', 'Tech', 'Sports', 'Art', 'Food', 'Business', 'Gaming', 'Health', 'Education', 'Social', 'Other'];
 
-export default function CreateEventPage() {
+// datetime-local input requires "YYYY-MM-DDTHH:mm" format
+function toDatetimeLocal(isoStr) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export default function EditEventPage() {
+  const { id }   = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: '', description: '', location: '',
     start_date: '', end_date: '', visibility: 'public', category: 'Other',
@@ -16,8 +26,35 @@ export default function CreateEventPage() {
   });
   const [errors,  setErrors]  = useState({});
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [coverPreviewError, setCoverPreviewError] = useState(false);
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await api.get(`/events/${id}`);
+        const ev = res.data.event;
+        setForm({
+          title:       ev.title       || '',
+          description: ev.description || '',
+          location:    ev.location    || '',
+          start_date:  toDatetimeLocal(ev.start_date),
+          end_date:    toDatetimeLocal(ev.end_date),
+          visibility:  ev.visibility  || 'public',
+          category:    ev.category    || 'Other',
+          cover_image: ev.cover_image || '',
+        });
+        setCoverPreviewError(false);
+      } catch {
+        toast.error('Failed to load event');
+        navigate(-1);
+      } finally {
+        setFetching(false);
+      }
+    };
+    fetchEvent();
+  }, [id]);
 
   const set = (key) => (e) => {
     setForm(f => ({ ...f, [key]: e.target.value }));
@@ -30,7 +67,6 @@ export default function CreateEventPage() {
     if (!file) return;
     setUploading(true);
     try {
-      // Re-use the same Cloudinary upload used by the gallery
       const { url } = await uploadEventImage('covers', file);
       setForm(f => ({ ...f, cover_image: url }));
       setCoverPreviewError(false);
@@ -58,15 +94,23 @@ export default function CreateEventPage() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
     try {
-      const res = await api.post('/events', form);
-      toast.success('Event created successfully! 🎉');
-      navigate(`/events/${res.data.id}`);
+      await api.put(`/events/${id}`, form);
+      toast.success('Event updated!');
+      navigate(`/events/${id}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to create event');
+      toast.error(err.response?.data?.message || 'Failed to update event');
     } finally {
       setLoading(false);
     }
   };
+
+  if (fetching) {
+    return (
+      <div className="page-content loading-overlay">
+        <div className="spinner" style={{ width: 48, height: 48 }} />
+      </div>
+    );
+  }
 
   return (
     <div className="page-content">
@@ -76,14 +120,14 @@ export default function CreateEventPage() {
           <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm" style={{ marginBottom: 20, paddingLeft: 0 }}>
             <FiArrowLeft /> Back
           </button>
-          <h1 style={{ fontSize: '2rem', fontWeight: 900 }}>Host an Event</h1>
-          <p style={{ color: 'var(--text-secondary)', marginTop: 8 }}>Fill in the details to create your event</p>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900 }}>Edit Event</h1>
+          <p style={{ color: 'var(--text-secondary)', marginTop: 8 }}>Update the details for your event</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
 
-            {/* Title */}
+            {/* Event Info */}
             <div className="card">
               <h3 className="card-title" style={{ marginBottom: 20 }}>📝 Event Info</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -95,7 +139,7 @@ export default function CreateEventPage() {
 
                 <div className="form-group">
                   <label className="form-label" htmlFor="ev-desc">Description</label>
-                  <textarea id="ev-desc" className="form-input form-textarea" placeholder="What's this event about? Who should attend?" value={form.description} onChange={set('description')} rows={4} />
+                  <textarea id="ev-desc" className="form-input form-textarea" placeholder="What's this event about?" value={form.description} onChange={set('description')} rows={4} />
                 </div>
 
                 <div className="grid-2">
@@ -125,20 +169,12 @@ export default function CreateEventPage() {
 
                 <div className="form-group">
                   <label className="form-label" htmlFor="cover">Cover Image</label>
+                  <input id="cover" className="form-input" placeholder="Paste an image URL, or upload a file below" value={form.cover_image} onChange={set('cover_image')} />
 
-                  {/* URL input */}
-                  <input
-                    id="cover"
-                    className="form-input"
-                    placeholder="Paste an image URL, or upload a file below"
-                    value={form.cover_image}
-                    onChange={set('cover_image')}
-                  />
-
-                  {/* File upload button */}
+                  {/* File upload */}
                   <div style={{ marginTop: 8 }}>
                     <label
-                      htmlFor="cover-file"
+                      htmlFor="cover-file-edit"
                       style={{
                         display: 'inline-flex', alignItems: 'center', gap: 6,
                         cursor: uploading ? 'not-allowed' : 'pointer',
@@ -151,14 +187,7 @@ export default function CreateEventPage() {
                         : <><FiUpload size={14} /> Upload from device</>
                       }
                     </label>
-                    <input
-                      id="cover-file"
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={handleCoverUpload}
-                      disabled={uploading}
-                    />
+                    <input id="cover-file-edit" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleCoverUpload} disabled={uploading} />
                   </div>
 
                   {/* Live preview */}
@@ -167,16 +196,12 @@ export default function CreateEventPage() {
                       src={form.cover_image}
                       alt="Cover preview"
                       onError={() => setCoverPreviewError(true)}
-                      style={{
-                        marginTop: 12, width: '100%', maxHeight: 200,
-                        objectFit: 'cover', borderRadius: 10,
-                        border: '1px solid var(--outline-variant)',
-                      }}
+                      style={{ marginTop: 12, width: '100%', maxHeight: 200, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--outline-variant)' }}
                     />
                   )}
                   {form.cover_image && coverPreviewError && (
                     <p style={{ marginTop: 8, fontSize: '0.8rem', color: 'var(--error)' }}>
-                      ⚠️ This URL could not be loaded as an image. Try a direct image link (ending in .jpg, .png, etc.) or upload a file instead.
+                      ⚠️ This URL could not be loaded. Try a direct image link or upload a file instead.
                     </p>
                   )}
                 </div>
@@ -203,18 +228,22 @@ export default function CreateEventPage() {
             {/* Location */}
             <div className="card">
               <h3 className="card-title" style={{ marginBottom: 20 }}>📍 Location</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="location">Venue / Address</label>
-                  <input id="location" className="form-input" placeholder="123 Main St, City, State" value={form.location} onChange={set('location')} />
-                </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="location">Venue / Address</label>
+                <input id="location" className="form-input" placeholder="123 Main St, City, State" value={form.location} onChange={set('location')} />
               </div>
             </div>
 
-            {/* Submit */}
-            <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
-              {loading ? <div className="spinner" style={{ width: 22, height: 22 }} /> : '🚀 Publish Event'}
-            </button>
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button type="button" className="btn btn-secondary btn-lg" style={{ flex: 1 }} onClick={() => navigate(-1)}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary btn-lg" style={{ flex: 2 }} disabled={loading}>
+                {loading ? <div className="spinner" style={{ width: 22, height: 22 }} /> : '💾 Save Changes'}
+              </button>
+            </div>
+
           </div>
         </form>
       </div>
