@@ -48,7 +48,8 @@ export default function AISuggestions() {
       setData(res.data);
       setFetched(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not load suggestions. Try again.');
+      const msg = err.response?.data?.message || 'Could not load suggestions. Try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

@@ -47,7 +47,7 @@ export default function MapEmbed({ location }) {
 
   if (status === 'ok' && coords) {
     return (
-      <div style={{ width: '100%', height: 260, borderRadius: 16, overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: 260, borderRadius: 16, overflow: 'hidden', isolation: 'isolate' }}>
         <MapContainer center={coords} zoom={14} style={{ width: '100%', height: '100%' }} scrollWheelZoom={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

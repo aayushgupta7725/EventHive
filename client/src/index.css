@@ -376,6 +376,19 @@ h1, h2, h3, h4, h5 { font-family: var(--font-display); font-weight: 700; line-he
   justify-content: center; color: var(--text-muted); font-size: 0.9rem;
 }
 
+/* ─── Leaflet z-index override ────────────────────── */
+/* Leaflet's default tile/marker panes sit at z-index 200–1000 which bleeds
+   over fixed overlays (lightbox uses z-index 9999). Force all panes down. */
+.leaflet-pane          { z-index: 4 !important; }
+.leaflet-tile-pane     { z-index: 2 !important; }
+.leaflet-overlay-pane  { z-index: 3 !important; }
+.leaflet-shadow-pane   { z-index: 4 !important; }
+.leaflet-marker-pane   { z-index: 5 !important; }
+.leaflet-tooltip-pane  { z-index: 6 !important; }
+.leaflet-popup-pane    { z-index: 7 !important; }
+.leaflet-top,
+.leaflet-bottom        { z-index: 8 !important; }
+
 /* ─── Guest List ──────────────────────────────────── */
 .guest-list { display: flex; flex-direction: column; gap: 12px; }
 .guest-item {

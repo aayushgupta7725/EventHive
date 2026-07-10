@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { FiUpload, FiTrash2, FiX } from 'react-icons/fi';
 import { uploadEventImage, deleteEventImage } from '../services/firebase';
 import { useAuth } from '../context/AuthContext';
@@ -32,15 +33,17 @@ export default function GalleryGrid({ eventId, images = [], onUpdate, isHost }) 
   };
 
   const handleDelete = async (img) => {
-  if (!window.confirm('Delete this image?')) return;
-  try {
-    await api.delete(`/gallery/${img.id}`);
-    onUpdate?.(images.filter((i) => i.id !== img.id));
-    toast.success('Image deleted');
-  } catch (err) {
-    toast.error(err.response?.data?.message || 'Delete failed');
-  }
-};
+    if (!window.confirm('Delete this image?')) return;
+    try {
+      await api.delete(`/gallery/${img.id}`);
+      onUpdate?.(images.filter((i) => i.id !== img.id));
+      toast.success('Image deleted');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  const closeLightbox = () => setLightbox(null);
 
   return (
     <>
@@ -80,29 +83,43 @@ export default function GalleryGrid({ eventId, images = [], onUpdate, isHost }) 
         ))}
       </div>
 
-      {/* Lightbox */}
-      {lightbox && (
+      {/* Lightbox — rendered via Portal onto document.body so nothing on the
+          page (including Leaflet's DOM-injected elements) can ever sit above it */}
+      {lightbox && createPortal(
         <div
           style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)',
-            zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.92)',
+            zIndex: 999999,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: 24,
           }}
-          onClick={() => setLightbox(null)}
+          onClick={closeLightbox}
         >
           <button
-            style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
-            onClick={() => setLightbox(null)}
+            style={{
+              position: 'absolute', top: 20, right: 20,
+              background: 'rgba(255,255,255,0.15)', border: 'none',
+              borderRadius: '50%', width: 40, height: 40,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', cursor: 'pointer',
+            }}
+            onClick={closeLightbox}
           >
-            <FiX size={28} />
+            <FiX size={22} />
           </button>
           <img
             src={lightbox.image_url}
             alt="Full size"
-            style={{ maxWidth: '90vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }}
+            style={{
+              maxWidth: '90vw', maxHeight: '85vh',
+              width: 'auto', height: 'auto',
+              borderRadius: 12, objectFit: 'contain', display: 'block',
+            }}
             onClick={(e) => e.stopPropagation()}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
