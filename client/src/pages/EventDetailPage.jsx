@@ -12,6 +12,27 @@ import MapEmbed from '../components/MapEmbed';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
+// Deterministic Unsplash fallback images per category (same as EventCard)
+const CATEGORY_IMAGES = {
+  Music:     'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=80',
+  Tech:      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80',
+  Sports:    'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=80',
+  Art:       'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1200&q=80',
+  Food:      'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&q=80',
+  Business:  'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&q=80',
+  Gaming:    'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&q=80',
+  Health:    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=80',
+  Education: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&q=80',
+  Social:    'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=1200&q=80',
+  Other:     'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80',
+};
+
+const CATEGORY_EMOJIS = {
+  Music: '🎵', Tech: '💻', Sports: '⚽', Art: '🎨',
+  Food: '🍕', Business: '💼', Gaming: '🎮', Health: '🏥',
+  Education: '📚', Social: '🎉', Other: '✨',
+};
+
 // Demo event for UI without backend
 const DEMO = {
   id: '1', title: 'Tech Summit 2026',
@@ -43,6 +64,7 @@ export default function EventDetailPage() {
   const [rsvp,   setRsvp]   = useState(null);
   const [tab, setTab]       = useState('details');
   const [loading, setLoading] = useState(true);
+  const [coverError, setCoverError] = useState(false);
 
   useEffect(() => {
     fetchEvent();
@@ -109,17 +131,19 @@ export default function EventDetailPage() {
         </button>
 
         {/* Cover */}
-          <div className="w-full aspect-[21/9] rounded-2xl overflow-hidden bg-secondary-container flex items-center justify-center text-7xl mb-8">
-            {event.cover_image
-              ? <img
-                  src={event.cover_image}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                />
-              : null
-            }
-            <span style={{ display: event.cover_image ? 'none' : 'flex' }}>🎉</span>
+          <div className="w-full rounded-2xl overflow-hidden mb-8" style={{ aspectRatio: '21/9', background: 'var(--bg-secondary)' }}>
+            {!coverError ? (
+              <img
+                src={event.cover_image || CATEGORY_IMAGES[event.category] || CATEGORY_IMAGES.Other}
+                alt={event.title}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                onError={() => setCoverError(true)}
+              />
+            ) : (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '5rem' }}>
+                {CATEGORY_EMOJIS[event.category] || '🎉'}
+              </div>
+            )}
           </div>
 
           {/* Main Grid */}
