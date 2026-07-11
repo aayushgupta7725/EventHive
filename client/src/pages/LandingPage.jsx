@@ -32,25 +32,25 @@ export default function LandingPage() {
               Introducing EventHive 1.0
             </div>
 
-            <h1 className="font-sans text-4xl sm:text-5xl lg:text-[48px] font-extrabold text-on-surface mb-6 leading-tight text-center lg:text-left">
+            <h1 className="font-sans text-5xl lg:text-[48px] font-extrabold text-on-surface mb-6 leading-tight">
               Transforming Ideas into <span className="text-primary italic">Global Gatherings</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-on-surface-variant mb-10 max-w-2xl text-center lg:text-left">
+            <p className="text-lg text-on-surface-variant mb-10 max-w-2xl">
               Create, discover, and manage events effortlessly. From intimate gatherings to
               large conferences — EventHive has everything you need.
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/register"
-                className="w-full sm:w-auto bg-primary-container text-on-primary text-sm font-semibold px-8 py-4 rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-center"
+                className="bg-primary-container text-on-primary text-sm font-semibold px-8 py-4 rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-center"
               >
                 Start for Free
               </Link>
               <Link
                 to="/dashboard"
-                className="w-full sm:w-auto bg-secondary-container text-primary text-sm font-semibold px-8 py-4 rounded-xl hover:bg-secondary-container/80 transition-colors flex items-center justify-center gap-2"
+                className="bg-secondary-container text-primary text-sm font-semibold px-8 py-4 rounded-xl hover:bg-secondary-container/80 transition-colors flex items-center justify-center gap-2"
               >
                 Browse Events <FiArrowRight size={18} />
               </Link>
@@ -69,11 +69,11 @@ export default function LandingPage() {
 
       {/* Stats */}
       <section className="bg-surface-container px-6 py-12">
-        <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-3 gap-8 text-center md:text-left md:px-12">
+        <div className="max-w-[1280px] mx-auto flex flex-wrap justify-between gap-8 md:px-12">
           {STATS.map((s) => (
             <div key={s.label} className="flex flex-col">
               <span className="text-2xl font-bold text-primary">{s.value}</span>
-              <span className="text-xs sm:text-sm font-semibold text-secondary uppercase tracking-wider">{s.label}</span>
+              <span className="text-sm font-semibold text-secondary uppercase tracking-wider">{s.label}</span>
             </div>
           ))}
         </div>

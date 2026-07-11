@@ -71,7 +71,7 @@ export default function DashboardPage() {
           </div>
           <Link
             to="/create-event"
-            className="w-full sm:w-auto justify-center inline-flex items-center gap-2 bg-primary-container text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 bg-primary-container text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
           >
             <FiPlus size={18} /> Host an Event
           </Link>
