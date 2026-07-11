@@ -24,7 +24,7 @@ export default function LandingPage() {
   return (
     <div style={{ overflowX: 'hidden' }}>
      {/* Hero */}
-      <section className="relative overflow-hidden pt-12 pb-24 lg:pt-24 lg:pb-32 px-6">
+      <section className="relative overflow-hidden pt-28 pb-24 lg:pt-36 lg:pb-32 px-6">
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-tertiary/10 text-tertiary text-sm font-semibold mb-6">
