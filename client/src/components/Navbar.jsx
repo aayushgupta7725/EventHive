@@ -116,7 +116,7 @@ export default function Navbar() {
               {/* Dropdown Panel */}
               {notifOpen && (
                 <div
-                  className="absolute -right-2 sm:right-0 top-[calc(100%+10px)] w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-2xl border border-outline-variant/30 shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-50 animate-fade overflow-hidden"
+                  className="fixed top-[72px] left-4 right-4 sm:absolute sm:top-[calc(100%+10px)] sm:-right-2 sm:left-auto sm:w-80 bg-white rounded-2xl border border-outline-variant/30 shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-50 animate-fade overflow-hidden"
                 >
                   {/* Header */}
                   <div className="flex items-center justify-between px-4 py-3 border-b border-outline-variant/20">
