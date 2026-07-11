@@ -16,7 +16,11 @@ app.use((req, res, next) => {
   next();
 });
 // ── Middleware ────────────────────────────────────────
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, '') : 'http://localhost:5173';
+app.use(cors({ 
+  origin: [clientUrl, 'https://eventhive-sage.vercel.app'], 
+  credentials: true 
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
