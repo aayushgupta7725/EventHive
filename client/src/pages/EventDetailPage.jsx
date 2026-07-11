@@ -141,7 +141,7 @@ export default function EventDetailPage() {
                     <span className={`badge ${RSVP_BADGE[rsvp] || 'badge-purple'}`}>You: {rsvp}</span>
                   )}
                 </div>
-                <h1 className="text-4xl font-extrabold text-on-surface mb-3 leading-tight">{event.title}</h1>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-on-surface mb-3 leading-tight">{event.title}</h1>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-sm font-bold">
                     {event.host_name?.[0] || '?'}
@@ -153,7 +153,7 @@ export default function EventDetailPage() {
               </div>
 
               {/* Tabs */}
-              <div className="flex gap-1 border-b border-outline-variant/30 mb-7">
+              <div className="flex overflow-x-auto gap-1 border-b border-outline-variant/30 mb-7">
                 {[['details', 'Details'], ['guests', `Guests (${guests.length})`], ['chat', 'Chat'], ['gallery', 'Gallery']].map(([k, label]) => (
                   <button
                     key={k}

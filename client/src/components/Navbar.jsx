@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiCalendar, FiCompass, FiPlus, FiUser, FiLogOut, FiBell, FiCheck, FiX } from 'react-icons/fi';
+import { FiCalendar, FiCompass, FiPlus, FiUser, FiLogOut, FiBell, FiCheck, FiX, FiMenu } from 'react-icons/fi';
 import { requestNotificationPermission } from '../services/firebase';
 
 // ── Seed notifications shown on first open ──────────
@@ -15,6 +15,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const [notifOpen,  setNotifOpen]  = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifs,     setNotifs]     = useState(SEED_NOTIFICATIONS);
   const [permAsked,  setPermAsked]  = useState(false);
   const panelRef = useRef(null);
@@ -187,16 +188,51 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/login" className="bg-secondary-container text-primary text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-secondary-container/80 transition-colors">
-              Sign In
-            </Link>
-            <Link to="/register" className="bg-primary-container text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
-              Get Started
-            </Link>
+            <div className="hidden sm:flex items-center gap-3">
+              <Link to="/login" className="bg-secondary-container text-primary text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-secondary-container/80 transition-colors">
+                Sign In
+              </Link>
+              <Link to="/register" className="bg-primary-container text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-lg hover:scale-[1.02] active:scale-95 transition-all">
+                Get Started
+              </Link>
+            </div>
           </>
         )}
+
+        {/* Mobile Menu Toggle */}
+        <button 
+          className="md:hidden p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors ml-1"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+        </button>
       </div>
     </div>
+
+    {/* Mobile Menu Dropdown */}
+    {mobileMenuOpen && (
+      <div className="md:hidden absolute top-[72px] left-0 right-0 bg-white border-b border-outline-variant/30 shadow-lg flex flex-col p-4 gap-2 animate-fade">
+        {user ? (
+          <>
+            <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-surface-container text-on-surface font-medium flex items-center gap-3">
+              <FiCompass size={18} className="text-on-surface-variant" /> Discover
+            </NavLink>
+            <NavLink to="/create-event" onClick={() => setMobileMenuOpen(false)} className="px-4 py-3 rounded-xl hover:bg-surface-container text-on-surface font-medium flex items-center gap-3">
+              <FiPlus size={18} className="text-on-surface-variant" /> Host Event
+            </NavLink>
+          </>
+        ) : (
+          <div className="flex flex-col gap-3 sm:hidden">
+            <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="w-full text-center px-4 py-3 rounded-xl hover:bg-surface-container text-on-surface font-medium border border-outline-variant/30">
+              Sign In
+            </Link>
+            <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="w-full text-center px-4 py-3 rounded-xl bg-primary-container text-white font-semibold shadow-md">
+              Get Started
+            </Link>
+          </div>
+        )}
+      </div>
+    )}
   </nav>
 );
 }
