@@ -135,7 +135,7 @@ export default function LandingPage() {
       <footer className="bg-white border-t border-outline-variant/30 py-7">
       <div className="max-w-[1280px] mx-auto px-6 flex justify-between items-center flex-wrap gap-3">
         <div className="flex items-center gap-2 font-bold text-on-surface">
-          🐝 Event<span className="text-primary">Hive</span>
+          <img src="/logo.png" alt="EventHive Logo" className="w-6 h-6 object-contain" /> Event<span className="text-primary">Hive</span>
         </div>
       </div>
     </footer>

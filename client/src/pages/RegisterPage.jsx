@@ -28,7 +28,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(form.name, form.email, form.password);
-      toast.success('Account created! Welcome to EventHive 🐝');
+      toast.success('Account created! Welcome to EventHive!');
       navigate('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');
@@ -50,7 +50,9 @@ export default function RegisterPage() {
       <div className="auth-card animate-fade">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">🐝</div>
+          <div className="auth-logo-icon">
+            <img src="/logo.png" alt="EventHive Logo" className="w-full h-full object-contain p-1" />
+          </div>
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem' }}>
             Event<span className="text-gradient">Hive</span>
           </span>

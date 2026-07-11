@@ -43,7 +43,9 @@ export default function LoginPage() {
       <div className="auth-card animate-fade">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">🐝</div>
+          <div className="auth-logo-icon">
+            <img src="/logo.png" alt="EventHive Logo" className="w-full h-full object-contain p-1" />
+          </div>
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem' }}>
             Event<span className="text-gradient">Hive</span>
           </span>

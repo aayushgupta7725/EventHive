@@ -6,7 +6,7 @@ import { requestNotificationPermission } from '../services/firebase';
 
 // ── Seed notifications shown on first open ──────────
 const SEED_NOTIFICATIONS = [
-  { id: 1, title: 'Welcome to EventHive! 🐝', body: 'Discover events, RSVP, and connect with others.', time: 'Just now',  read: false },
+  { id: 1, title: 'Welcome to EventHive!', body: 'Discover events, RSVP, and connect with others.', time: 'Just now',  read: false },
   { id: 2, title: 'Tip: Host your first event', body: 'Click "Host Event" in the nav to get started.', time: '1 min ago', read: false },
 ];
 
@@ -64,7 +64,7 @@ export default function Navbar() {
     <div className="flex items-center justify-between h-full max-w-[1280px] mx-auto px-6">
       {/* Brand */}
       <Link to="/" className="flex items-center gap-2.5 font-extrabold text-xl text-on-surface">
-        <div className="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center text-lg">🐝</div>
+        <img src="/logo.png" alt="EventHive" className="w-9 h-9 object-contain" />
         <span>Event<span className="text-primary">Hive</span></span>
       </Link>
 
